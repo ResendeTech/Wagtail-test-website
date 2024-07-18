@@ -1,0 +1,47 @@
+.portfolio-item {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.portfolio-item h1 {
+    grid-column: 1 / -1;
+}
+
+.portfolio-item .image {
+    grid-column: 1;
+}
+
+.portfolio-item .description {
+    grid-column: 2;
+}
+
+.portfolio-item .categories,
+.portfolio-item .url {
+    grid-column: 1 / -1;
+}
+
+@media (max-width: 768px) {
+    .portfolio-item {
+        grid-template-columns: 1fr;
+    }
+
+    .portfolio-item .image,
+    .portfolio-item .description {
+        grid-column: 1;
+    }
+}
+.nav-container {
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    padding: 20px;
+    z-index: 1000; /* Ensure it's above other content */
+}
+
+.nav-link {
+    text-decoration: none;
+    color: #000; /* Or any color you prefer */
+    margin-left: 10px; /* Space out the links */
+}
