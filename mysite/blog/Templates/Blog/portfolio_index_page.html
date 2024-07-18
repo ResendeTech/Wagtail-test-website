@@ -13,7 +13,7 @@
     {% for item in portfolio_items %}
         <div class="portfolio-item">
             <h2><a href="{% pageurl item %}">{{ item.title }}</a></h2>
-            <p> {{ item.description|truncatechars_html:200 }}</p>
+            <p> {{ item.description|richtext }}</p>
         </div>
     {% endfor %}
     <div class="nav-container">
