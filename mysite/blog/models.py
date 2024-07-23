@@ -12,6 +12,9 @@ from modelcluster.fields import ParentalKey, ParentalManyToManyField
 from wagtail.admin.panels import FieldPanel, InlinePanel, MultiFieldPanel
 from modelcluster.contrib.taggit import ClusterTaggableManager
 from taggit.models import TaggedItemBase
+from taggit.managers import TaggableManager
+from django.core.exceptions import ValidationError
+
 
 class BlogIndexPage(Page):
     intro = RichTextField(blank=True)
@@ -25,6 +28,52 @@ class BlogIndexPage(Page):
     content_panels = Page.content_panels + [
         FieldPanel('intro')
     ]
+    def get_blog_index_page(self):
+        # Assuming BlogIndexPage is the model name of your blog index page
+        return BlogIndexPage.objects.live().first()
+
+class PortfolioIndexPage(Page):
+    intro = RichTextField(blank=True)
+
+    content_panels = Page.content_panels + [
+        FieldPanel('intro')
+    ]
+
+    
+    def get_context(self, request):
+        context = super().get_context(request)
+        context['portfolio_items'] = PortfolioItem.objects.child_of(self).live().order_by('title')
+        return context
+
+    parent_page_types = ['blog.BlogIndexPage']  # Adjust this if your top-level page has a different name
+    subpage_types = ['PortfolioItem']
+
+    def clean(self):
+        super().clean()
+        # Check if there's already a PortfolioIndexPage
+        if PortfolioIndexPage.objects.exists() and not self.pk:
+            raise ValidationError("There can only be one PortfolioIndexPage instance.")
+
+class PortfolioItem(Page):
+    #title = models.CharField(max_length=255)  # Add this line
+    description = RichTextField()
+    categories = TaggableManager(blank=True)
+    url = models.URLField(blank=True, null=True)  # Make optional by adding null=True
+    image = models.ForeignKey(
+        'wagtailimages.Image',
+        null=True, blank=True,
+        on_delete=models.SET_NULL,
+        related_name='+'
+    )
+
+    content_panels = Page.content_panels + [
+        FieldPanel('title'),  # Add this panel
+        FieldPanel('description'),
+        FieldPanel('categories'),
+        FieldPanel('url'),
+        FieldPanel('image'),
+    ]
+    parent_page_types = ['PortfolioIndexPage']
 
 class BlogPageTag(TaggedItemBase):
     content_object = ParentalKey(

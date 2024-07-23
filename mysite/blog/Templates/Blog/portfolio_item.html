@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% load wagtailcore_tags wagtailimages_tags %}
+{% load static %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'blog/css/portfolio_styles.css' %}">
+{% endblock extra_head %}
+
+{% block content %}
+    <article class="portfolio-item">
+        <h1>{{ page.title }}</h1>
+        {% if page.image %}
+            {% image page.image fill-300x200 %}
+        {% endif %}
+        <div class="description">
+            {{ page.description|richtext }}
+        </div>
+        {% if page.categories.all %}
+            <div class="categories">
+                Categories:
+                {% for category in page.categories.all %}
+                    <span class="category">{{ category }}</span>
+                {% endfor %}
+            </div>
+        {% endif %}
+        {% if page.url %}
+            <a href="{{ page.url }}" target="_blank" rel="noopener noreferrer">View Project</a>
+        {% endif %}
+    </article>
+
+    <div>
+        <p><a href="{{ page.get_parent.url }}">Return to portfolio</a></p>
+    </div>
+{% endblock %}
